@@ -74,8 +74,9 @@ class TextRewriterPipeline:
                  "attribute_collection": RunnablePassthrough()
                  }
             )
+        chain = self.runner | prompt | self.model | self.parser
         logger.info(f"Chain compilation complete")
-        return self.runner | prompt | self.model | self.parser
+        return chain
 
     def compile_without_docs(self):
         # Return the chain
@@ -84,8 +85,9 @@ class TextRewriterPipeline:
             input_variables=["attribute_collection"],
             partial_variables={"format_instructions": self.parser.get_format_instructions()}
         )
+        chain = prompt | self.model | self.parser
         logger.info(f"Chain compilation complete")
-        return prompt | self.model | self.parser
+        return chain
 
     def rewrite_text(self, documents: Optional[List[Document]]):
         logger.info(f"Rewriting text")
